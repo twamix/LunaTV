@@ -50,6 +50,9 @@ importers:
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
+      flv.js:
+        specifier: ^1.6.2
+        version: 1.6.2
       framer-motion:
         specifier: ^12.18.1
         version: 12.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2908,6 +2911,9 @@ packages:
 
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
+
+  flv.js@1.6.2:
+    resolution: {integrity: sha512-xre4gUbX1MPtgQRKj2pxJENp/RnaHaxYvy3YToVVCrSmAWUu85b9mug6pTXF6zakUjNP2lFWZ1rkSX7gxhB/2A==}
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -8592,6 +8598,11 @@ snapshots:
       rimraf: 3.0.2
 
   flatted@3.3.3: {}
+
+  flv.js@1.6.2:
+    dependencies:
+      es6-promise: 4.2.8
+      webworkify-webpack: 2.1.5
 
   for-each@0.3.5:
     dependencies:
