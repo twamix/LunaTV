@@ -28,6 +28,7 @@ import PageLayout from '@/components/PageLayout';
 declare global {
   interface HTMLVideoElement {
     hls?: any;
+    flv?: any;
   }
 }
 
@@ -932,6 +933,32 @@ function LivePageClient() {
     });
   }
 
+  async function flvLoader(video: HTMLVideoElement, url: string) {
+    try {
+      const flvjs = await import('flv.js');
+      const flv = flvjs.default as any;
+
+      if (!flv.isSupported()) {
+        console.error('Flv.js 未支持');
+        return;
+      }
+
+      if (video.flv) {
+        video.flv.destroy();
+      }
+
+      const flvPlayer = flv.createPlayer({
+        type: 'flv',
+        url: url,
+      });
+      flvPlayer.attachMediaElement(video);
+      flvPlayer.load();
+      video.flv = flvPlayer;
+    } catch (error) {
+      console.error('加载 Flv.js 失败:', error);
+    }
+  }
+
   // 播放器初始化
   useEffect(() => {
     const preload = async () => {
@@ -965,25 +992,18 @@ function LivePageClient() {
         type = precheckResult.type;
       }
 
-      // 如果不是 m3u8 类型，设置不支持的类型并返回
-      if (type !== 'm3u8') {
-        setUnsupportedType(type);
-        setIsVideoLoading(false);
-        return;
-      }
-
-      // 重置不支持的类型
-      setUnsupportedType(null);
-
-      const customType = { m3u8: m3u8Loader };
-      const targetUrl = `/api/proxy/m3u8?url=${encodeURIComponent(videoUrl)}&moontv-source=${currentSourceRef.current?.key || ''}`;
+      const customType = type === 'flv' ? {
+        flv: flvLoader,
+      } : type === 'mp4' ? {} : {
+        m3u8: m3u8Loader,
+      };
       try {
         // 创建新的播放器实例
         Artplayer.USE_RAF = true;
 
         artPlayerRef.current = new Artplayer({
           container: artRef.current,
-          url: targetUrl,
+          url: `/api/proxy/m3u8?url=${encodeURIComponent(videoUrl)}&moontv-source=${currentSourceRef.current?.key || ''}`,
           poster: currentChannel.logo,
           volume: 0.7,
           isLive: true, // 设置为直播模式
@@ -1052,9 +1072,10 @@ function LivePageClient() {
         });
 
         if (artPlayerRef.current?.video) {
+          const finalUrl = `/api/proxy/m3u8?url=${encodeURIComponent(videoUrl)}`;
           ensureVideoSource(
             artPlayerRef.current.video as HTMLVideoElement,
-            targetUrl
+            finalUrl
           );
         }
 
