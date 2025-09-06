@@ -597,7 +597,7 @@ function LivePageClient() {
             hls.startLoad();
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
-            // hls.recoverMediaError();
+            hls.recoverMediaError();
             break;
           default:
             hls.destroy();
